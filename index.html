@@ -98,13 +98,17 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
+  .row2 .field {
+    min-width: 0;
+  }
   input[type="date"], input[type="time"], textarea {
     width: 100%;
+    min-width: 0;
     background: var(--surface-alt);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
-    padding: 11px 12px;
+    padding: 11px 8px;
     font-size: 15px;
     font-family: inherit;
   }
@@ -294,6 +298,15 @@
     </div>
 
     <div class="field">
+      <label>Bathroom trips</label>
+      <div class="stepper">
+        <button type="button" id="st-bathroom-minus">–</button>
+        <span class="count" id="st-bathroom-count">0</span>
+        <button type="button" id="st-bathroom-plus">+</button>
+      </div>
+    </div>
+
+    <div class="field">
       <label>Possible factors</label>
       <div class="chips" id="st-chips"></div>
     </div>
@@ -328,14 +341,12 @@
 (function () {
   const FACTORS = [
     "Caffeine after noon",
-    "Alcohol before bed",
     "Ate close to bedtime",
     "Screen time before bed",
     "Stress or anxious thoughts",
     "Room too warm or cold",
     "Noise",
     "Pain or discomfort",
-    "Bathroom trip",
     "Medication side effect"
   ];
 
@@ -348,6 +359,7 @@
   const dateInput = $("st-date");
   const bedtimeInput = $("st-bedtime");
   const countEl = $("st-count");
+  const bathroomCountEl = $("st-bathroom-count");
   const chipsEl = $("st-chips");
   const notesInput = $("st-notes");
   const statusEl = $("st-status");
@@ -356,6 +368,7 @@
   const cancelBtn = $("st-clear-form");
 
   let wakeCount = 0;
+  let bathroomCount = 0;
 
   function todayStr() {
     const d = new Date();
@@ -390,6 +403,8 @@
     bedtimeInput.value = "";
     wakeCount = 0;
     countEl.textContent = "0";
+    bathroomCount = 0;
+    bathroomCountEl.textContent = "0";
     selectedFactors = new Set();
     notesInput.value = "";
     editingDate = null;
@@ -440,7 +455,7 @@
       div.innerHTML = `
         <div class="entry-top">
           <span class="entry-date">${fmtDate(d)}</span>
-          <span class="entry-wake">${e.wakeCount} wake-up${e.wakeCount === 1 ? "" : "s"}</span>
+          <span class="entry-wake">${e.wakeCount} wake-up${e.wakeCount === 1 ? "" : "s"}${e.bathroomCount ? `, ${e.bathroomCount} bathroom trip${e.bathroomCount === 1 ? "" : "s"}` : ""}</span>
         </div>
         <div class="entry-factors">${factorsLine}</div>
         ${e.notes ? `<div class="entry-notes">${escapeHtml(e.notes)}</div>` : ""}
@@ -473,6 +488,8 @@
     bedtimeInput.value = e.bedtime || "";
     wakeCount = e.wakeCount || 0;
     countEl.textContent = String(wakeCount);
+    bathroomCount = e.bathroomCount || 0;
+    bathroomCountEl.textContent = String(bathroomCount);
     selectedFactors = new Set(e.factors || []);
     notesInput.value = e.notes || "";
     editingDate = dateStr;
@@ -539,6 +556,14 @@
     wakeCount += 1;
     countEl.textContent = String(wakeCount);
   };
+  $("st-bathroom-minus").onclick = () => {
+    bathroomCount = Math.max(0, bathroomCount - 1);
+    bathroomCountEl.textContent = String(bathroomCount);
+  };
+  $("st-bathroom-plus").onclick = () => {
+    bathroomCount += 1;
+    bathroomCountEl.textContent = String(bathroomCount);
+  };
 
   $("st-save").onclick = async () => {
     const d = dateInput.value || todayStr();
@@ -546,6 +571,7 @@
       date: d,
       bedtime: bedtimeInput.value || "",
       wakeCount: wakeCount,
+      bathroomCount: bathroomCount,
       factors: Array.from(selectedFactors),
       notes: notesInput.value.trim(),
       savedAt: new Date().toISOString()
@@ -571,12 +597,12 @@
       setStatus("Nothing to export yet.", true);
       return;
     }
-    const header = ["Date", "Bedtime", "Wake Count", "Factors", "Notes"];
+    const header = ["Date", "Bedtime", "Wake Count", "Bathroom Trips", "Factors", "Notes"];
     const rows = dates.map((d) => {
       const e = entries[d];
       const factors = (e.factors || []).join("; ");
       const notes = (e.notes || "").replace(/"/g, '""');
-      return [e.date, e.bedtime || "", e.wakeCount, `"${factors}"`, `"${notes}"`].join(",");
+      return [e.date, e.bedtime || "", e.wakeCount, e.bathroomCount || 0, `"${factors}"`, `"${notes}"`].join(",");
     });
     const csv = [header.join(","), ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
