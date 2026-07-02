@@ -280,8 +280,27 @@
 <div id="sleep-tracker-root">
   <div class="header">
     <svg class="moon" width="34" height="34" viewBox="0 0 34 34">
-      <circle cx="17" cy="17" r="15" fill="none" stroke="#2f3450" stroke-width="2"/>
-      <path d="M20 4 A14 14 0 1 0 20 30 A11 11 0 1 1 20 4 Z" fill="#e8b75d"/>
+      <defs>
+        <radialGradient id="moonBody" cx="38%" cy="32%" r="75%">
+          <stop offset="0%" stop-color="#f8e6b4"/>
+          <stop offset="100%" stop-color="#d9a441"/>
+        </radialGradient>
+      </defs>
+      <circle cx="17" cy="17" r="15" fill="#161a2c" stroke="#2f3450" stroke-width="1.2"/>
+      <circle cx="7.5" cy="8.5" r="0.6" fill="#eef0ff" opacity="0.7"/>
+      <circle cx="5.5" cy="17.5" r="0.5" fill="#eef0ff" opacity="0.5"/>
+      <circle cx="9" cy="24.5" r="0.5" fill="#eef0ff" opacity="0.55"/>
+      <circle cx="17" cy="17" r="12.5" fill="url(#moonBody)"/>
+      <path d="M17 4.5 A12.5 12.5 0 1 0 17 29.5 A9 9 0 1 1 17 4.5 Z" fill="#161a2c" opacity="0.88"/>
+      <circle cx="22.2" cy="11.8" r="1" fill="#c98f3a" opacity="0.5"/>
+      <circle cx="25" cy="20.2" r="0.8" fill="#c98f3a" opacity="0.45"/>
+      <circle cx="19.5" cy="23.5" r="0.6" fill="#c98f3a" opacity="0.4"/>
+      <path d="M20.2 14.3 Q21.4 13.2 22.6 14.3" stroke="#8a5a22" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <path d="M24.6 14.3 Q25.8 13.2 27 14.3" stroke="#8a5a22" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <circle cx="20.6" cy="18.4" r="0.55" fill="#e2a15a" opacity="0.55"/>
+      <circle cx="26.4" cy="18.4" r="0.55" fill="#e2a15a" opacity="0.55"/>
+      <path d="M23.3 16.3 Q23.9 17.7 23.1 18.3" stroke="#8a5a22" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+      <path d="M21.2 20.6 Q23.7 22.4 26.2 20.6" stroke="#8a5a22" stroke-width="0.75" fill="none" stroke-linecap="round"/>
     </svg>
     <div>
       <h1>Sleep Tracker</h1>
